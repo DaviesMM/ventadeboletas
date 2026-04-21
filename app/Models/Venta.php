@@ -120,7 +120,30 @@ public function marcarIngreso($idVenta) {
     return $stmt->fetchAll(\PDO::FETCH_ASSOC);
     }
 
+public function getStatsEvento($idEvento) {
+    // Cambié v.total_pago por v.total (ajusta según tu tabla real)
+    $sql = "SELECT 
+                e.nombre_evento, e.precio_boleta, e.stock_total,
+                COUNT(v.id_venta) as transacciones,
+                SUM(v.cantidad) as boletas_vendidas,
+                SUM(v.total) as ingresos_totales, 
+                SUM(CASE WHEN v.estado_asistencia = 'ingresado' THEN v.cantidad ELSE 0 END) as personas_adentro
+            FROM eventos e
+            LEFT JOIN ventas v ON e.id_evento = v.id_evento
+            WHERE e.id_evento = :id
+            GROUP BY e.id_evento";
+            
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':id' => $idEvento]);
+    return $stmt->fetch(\PDO::FETCH_ASSOC);
+}
 
+public function getAsistentesPorEvento($idEvento) {
+    $sql = "SELECT * FROM ventas WHERE id_evento = :id ORDER BY id_venta DESC";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':id' => $idEvento]);
+    return $stmt->fetchAll(\PDO::FETCH_ASSOC);
+}
 
     
 } // fin de la clase Venta

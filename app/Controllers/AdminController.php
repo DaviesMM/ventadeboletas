@@ -106,7 +106,36 @@ public function validarManual() {
         $this->render('admin/resultado_scan', $data);
     }
 
+// metodo para exportar archivos .csv
+public function exportarExcel() {
+    $this->verificarSesion();
+    $ventaModel = new \App\Models\Venta();
+    $asistentes = $ventaModel->getListaAsistentes();
 
+    $filename = "asistentes_evento_" . date('Ymd') . ".csv";
+    
+    // Cabeceras para forzar la descarga
+    header("Content-Type: text/csv; charset=utf-8");
+    header("Content-Disposition: attachment; filename=$filename");
+
+    $output = fopen("php://output", "w");
+    
+    // Títulos de las columnas
+    fputcsv($output, ['ID Venta', 'Evento', 'Cliente', 'Cantidad', 'Estado', 'Fecha Ingreso']);
+
+    foreach ($asistentes as $a) {
+        fputcsv($output, [
+            $a['id_venta'],
+            $a['nombre_evento'],
+            $a['nombre_cliente'],
+            $a['cantidad'],
+            $a['estado_asistencia'],
+            $a['fecha_ingreso']
+        ]);
+    }
+    fclose($output);
+    exit();
+}
 // Método para mostrar la sección de gestión de eventos
    public function eventos() {
     $eventos = $this->eventoModel->getAll();
@@ -117,11 +146,49 @@ public function validarManual() {
     $this->render('admin/eventos', $data);
 }
 // Método para mostrar la sección de reportes financieros
-    public function reportes() {
-      //  die("Hola, estoy en reportes");
-        $data = ['titulo' => 'E-ticket | Reportes Financieros'];
-        $this->render('admin/reportes', $data);
+ public function reportes() {
+    $this->verificarSesion();
+    $db = (new \App\Core\Database())->getConnection();
+
+    // Consultamos los eventos y calculamos sus métricas en una sola query
+    $sql = "SELECT 
+                e.id_evento, 
+                e.nombre_evento, 
+                e.stock_total,
+                (SELECT SUM(cantidad) FROM ventas WHERE id_evento = e.id_evento) as vendidos,
+                (SELECT SUM(cantidad) FROM ventas WHERE id_evento = e.id_evento AND estado_asistencia = 'ingresado') as ingresados
+            FROM eventos e";
+    
+    $stmt = $db->prepare($sql);
+    $stmt->execute();
+    $eventosData = $stmt->fetchAll(\PDO::FETCH_ASSOC);
+
+    $data = [
+        'titulo' => 'Reportes por Evento',
+        'eventos' => $eventosData
+    ];
+
+    $this->render('admin/reportes', $data);
+}
+public function verAsistentesPorEvento($idEvento) {
+  
+    $ventaModel = new \App\Models\Venta();
+    $stats = $ventaModel->getStatsEvento($idEvento);
+    $asistentes = $ventaModel->getAsistentesPorEvento($idEvento);
+
+    if (!$stats) {
+        header("Location: /E-ticket/admin/reportes");
+        exit;
     }
+
+    $data = [
+        'titulo' => 'Detalle del Evento',
+        'stats' => $stats,
+        'asistentes' => $asistentes
+    ];
+
+    $this->render('admin/detalle_evento', $data);
+}
  // Método para mostrar la sección de validadores/staff
     public function staff() {
         $data = ['titulo' => 'E-ticket | Validadores'];

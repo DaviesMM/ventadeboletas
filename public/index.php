@@ -20,6 +20,9 @@ $router->add('admin/eventos', 'App\Controllers\AdminController', 'eventos');
 $router->add('admin/reportes', 'App\Controllers\AdminController', 'reportes');
 $router->add('admin/staff', 'App\Controllers\AdminController', 'staff');
 $router->add('admin/guardar-evento', 'App\Controllers\AdminController', 'guardar');
+$router->add('admin/exportar', 'App\Controllers\AdminController', 'exportarExcel');
+$router->add('admin/asistentes_evento', 'App\Controllers\AdminController', 'verAsistentesPorEvento');
+// debe ir de ultama para no generar conflicto
 $router->add('admin', 'App\Controllers\AdminController', 'index');
 // rutas para panel de clientes/compra
 
