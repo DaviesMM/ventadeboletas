@@ -1,0 +1,10 @@
+<IfModule mod_rewrite.c>
+    RewriteEngine On
+    
+    # No procesar archivos o carpetas reales (imágenes, css, js)
+    RewriteCond %{REQUEST_FILENAME} !-f
+    RewriteCond %{REQUEST_FILENAME} !-d
+    
+    # El corazón del Router: pasa la URL como parámetro
+    RewriteRule ^(.*)$ index.php?url=$1 [QSA,L]
+</IfModule>

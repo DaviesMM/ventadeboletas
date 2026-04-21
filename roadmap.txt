@@ -1,0 +1,65 @@
+Este enfoque es perfecto. Dedicar **30 a 45 minutos constantes** es mucho más efectivo que intentar programar 5 horas un solo día. Al final de cada sesión, tendrás algo funcional.
+
+Aquí tienes tu **Roadmap de Micro-Tareas**, diseñado para construir un sistema seguro con un sistema de rutas (`Router`) y protección contra Inyección SQL (usando PDO).
+
+---
+
+## Fase 1: Cimientos y Ruteo (Semana 1)
+*Objetivo: Tener la estructura donde todo va a vivir.*
+
+* **Día 1: Base de Datos.** Ejecuta el script SQL que consolidamos. Asegúrate de que las tablas estén creadas en tu Localhost.
+* **Día 2: Estructura de Carpetas.** Crea este árbol para mantener el orden:
+    ```text
+    /proyecto
+      /app
+        /Core      (Router, Base de Datos)
+        /Controllers
+        /Models
+      /public      (index.php, css, js)
+      /views       (HTML)
+      .htaccess    (Para URLs limpias)
+    ```
+* **Día 3: El `.htaccess`.** Configura la redirección para que todas las URL apunten a `public/index.php`. Esto es clave para las URLs limpias.
+* **Día 4: Clase de Conexión (Seguridad).** Crea `app/Core/Database.php` usando **PDO**. PDO es tu mejor amigo contra la Inyección SQL porque usa sentencias preparadas.
+* **Día 5: El Router (Parte 1).** Crea una clase `Router.php` sencilla que capture la URL y sepa qué controlador llamar.
+
+---
+
+## Fase 2: Backend Administrativo - CRUD de Eventos (Semana 2)
+*Objetivo: Poder crear los eventos que se verán en el Dashboard.*
+
+* **Día 1: Modelo de Evento.** Crea la clase `Evento.php` con métodos para hacer `INSERT` y `SELECT` usando PDO.
+* **Día 2: Controlador de Eventos.** Un archivo que reciba los datos del formulario y los pase al modelo.
+* **Día 3: Interfaz de "Crear Evento".** Maqueta el formulario basado en los diseños modernos que aprobaste.
+* **Día 4: Lógica de Imagen.** Programa la subida de los posters de los conciertos al servidor.
+* **Día 5: Dashboard Principal.** Haz el `SELECT * FROM eventos` y muéstralos en las tarjetas del dashboard.
+
+---
+
+## Fase 3: Venta y Seguridad de Boletas (Semana 3)
+*Objetivo: Que un usuario pueda comprar y generar su código único.*
+
+* **Día 1: Vista de Catálogo.** Maqueta la landing page mobile-first donde se ven los eventos activos.
+* **Día 2: Lógica de Código Único.** Implementa la función de hash que discutimos (8 caracteres aleatorios).
+* **Día 3: Registro de Boleta.** Al dar "Comprar", insertar en la tabla `boletas` con estado `pendiente`.
+* **Día 4: El Webhook (Simulado).** Crea el script que cambia el estado de la boleta de `pendiente` a `pagada`.
+* **Día 5: Vista de Ticket.** Muestra el QR (puedes usar una librería como `phpqrcode`) con los datos del asistente.
+
+---
+
+## Fase 4: Validación y Staff (Semana 4)
+*Objetivo: El control de puerta y la sesión única.*
+
+* **Día 1: Login de Staff.** Pantalla de acceso que valide el `id_evento_asignado`.
+* **Día 2: Control de Sesión Única.** Lógica de `session_token` en la DB para cerrar sesiones antiguas.
+* **Día 3: Interfaz de Escaneo.** Integrar la librería de JS para abrir la cámara (ej: `html5-qrcode`).
+* **Día 4: Lógica de Validación.** El archivo PHP que recibe el código escaneado, verifica si existe y si ya fue usado.
+* **Día 5: UI de Resultados.** Programar los estados Verde (Éxito) y Rojo (Error/Duplicado).
+
+---
+
+### Tu primera tarea (Hoy - 30 min):
+**Configura tu entorno y crea la Base de Datos.**
+Si ya tienes XAMPP o Laragon encendido, copia el código SQL anterior y ejecútalo. Una vez lo tengas, confírmame y mañana te doy el código para el **`.htaccess`** y el **`Router`**, que es lo más "batalloso" al principio.
+
+**¿Empezamos con el SQL hoy?**
