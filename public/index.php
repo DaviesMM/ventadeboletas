@@ -1,50 +1,27 @@
 <?php
-// 1. Errores para desarrollo
-ini_set('display_errors', 1);
-error_reporting(E_ALL);
+require_once '../app/autoload.php';// Si usas composer, sino carga tus archivos manualmente
 
-// 2. Cargar el Autoload
-require_once "../app/Core/Autoload.php";
-
-// 3. Usar el Router
 use App\Core\Router;
 
 $router = new Router();
 
-// 4. DEFINIR LAS RUTAS
-// formato: $router->add('ruta', 'Controlador', 'Método');
-$router->add('', 'App\Controllers\HomeController', 'index');
-// Rutas del Panel Administrativo
 
-$router->add('admin/eventos', 'App\Controllers\AdminController', 'eventos');
-$router->add('admin/reportes', 'App\Controllers\AdminController', 'reportes');
-$router->add('admin/staff', 'App\Controllers\AdminController', 'staff');
-$router->add('admin/guardar-evento', 'App\Controllers\AdminController', 'guardar');
-$router->add('admin/exportar', 'App\Controllers\AdminController', 'exportarExcel');
-$router->add('admin/asistentes_evento', 'App\Controllers\AdminController', 'verAsistentesPorEvento');
-// debe ir de ultama para no generar conflicto
+// --- RUTAS PÚBLICAS (TIENDA) ---
+$router->add('', 'App\Controllers\TiendaController', 'index');
+$router->add('evento', 'App\Controllers\TiendaController', 'MostrarEvento');
+
+// --- RUTAS ADMINISTRATIVAS ---
 $router->add('admin', 'App\Controllers\AdminController', 'index');
-// rutas para panel de clientes/compra
+$router->add('admin/reportes', 'App\Controllers\AdminController', 'reportes');
+$router->add('admin/asistentes_evento', 'App\Controllers\AdminController', 'verAsistentesPorEvento');
+// Rutas para creación de eventos
+$router->add('admin/nuevo_evento', 'App\Controllers\AdminController', 'crearEvento');
+$router->add('admin/guardar_evento', 'App\Controllers\AdminController', 'guardarEvento');
 
-// ruta para mostrar el ticket después de la compra
-$router->add('ticket', 'App\Controllers\VentaController', 'ticket');
-// Cuando el usuario viene del Home
-$router->add('comprar', 'App\Controllers\VentaController', 'checkout');
-// Cuando el usuario envía el formulario de datos
-$router->add('procesar-pago', 'App\Controllers\VentaController', 'procesarPago');
-// Cuando el validador escanea el QR
-$router->add('validar', 'App\Controllers\AdminController', 'validarTicket');
-$router->add('validar_manual', 'App\Controllers\AdminController', 'validarManual');
-// Cuando ya se procesó y queremos ver el QR
-$router->add('ticket', 'App\Controllers\VentaController', 'ticket');
-// Rutas de autenticación
-$router->add('login', 'App\Controllers\AuthController', 'login');
-$router->add('logout', 'App\Controllers\AuthController', 'logout');
+// --- RUTAS DEL STAFF ---
+$router->add('staff/scanner', 'App\Controllers\StaffController', 'index');
+$router->add('staff/validar', 'App\Controllers\StaffController', 'validarQR');
 
-// Capturamos la URL que nos manda el .htaccess
+// Ejecución
 $url = $_GET['url'] ?? '';
-$url = trim($url, '/');
-
-// Si la URL está vacía (raiz), le asignamos algo por defecto o lo dejamos vacío
-// dependiendo de cómo tengas tus rutas.
 $router->run($url);
