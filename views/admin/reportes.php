@@ -56,7 +56,7 @@
                             </div>
                         </div>
 
-                        <a href="/E-ticket/admin/asistentes_evento/<?php echo $e['id_evento']; ?>" 
+                        <a href="/E-ticket/admin/detalle/<?php echo $e['id_evento']; ?>" 
                            class="block w-full text-center bg-[#0f172a] hover:bg-[#4ade80] hover:text-black text-white font-bold py-3 rounded-xl transition-all uppercase text-xs tracking-widest mt-2">
                             Ver Detalles
                         </a>

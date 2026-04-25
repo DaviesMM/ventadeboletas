@@ -17,7 +17,8 @@ class AdminController extends BaseController {
             'stats' => [
                 'total_eventos' => $eventoModel->contarEventos() ?? 0,
                 'total_ventas' => $ventaModel->contarVentasTotales() ?? 0,
-                'ingresos' => $ventaModel->getIngresosGlobales() ?? 0
+                'ingresos' => $ventaModel->getIngresosGlobales() ?? 0,
+                'eventos_recientes' => $eventoModel->getRecientes(5)
             ],
             'eventos_recientes' => $eventoModel->getRecientes(5) // Para mostrar algo en la tabla
         ];
@@ -51,8 +52,8 @@ class AdminController extends BaseController {
         } else {
             die("Error al crear el evento");
         }
+        }
     }
-}
    public function reportes() {
     $eventoModel = new \App\Models\Evento();
     
@@ -66,4 +67,27 @@ class AdminController extends BaseController {
 
     $this->render('admin/reportes', $data, 'admin');
     }
+    // funcion para ver los detalles de cada eventos, teniendo encuenta quienes han comprado
+    public function verDetalle($id) {
+    if (!$id) { header('Location: /E-ticket/admin/reportes'); exit; }
+
+    $eventoModel = new \App\Models\Evento();
+    $ventaModel = new \App\Models\Venta();
+
+    $evento = $eventoModel->getPorId($id);
+    
+    // Si el evento no existe, volvemos atrás
+    if (!$evento) { header('Location: /E-ticket/admin/reportes'); exit; }
+
+    $data = [
+        'titulo' => 'Gestión: ' . $evento['nombre_evento'],
+        'evento' => $evento,
+        'compradores' => $ventaModel->getVentasPorEvento($id),
+        'stats' => [
+            'ingreso_estimado' => ($evento['stock_total'] - $evento['stock_disponible']) * $evento['precio_boleta']
+        ]
+    ];
+
+    $this->render('admin/detalle_evento', $data, 'admin');
+}
 }

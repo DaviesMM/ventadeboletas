@@ -60,6 +60,18 @@ public function insertar($datos) {
         ':stock_disponible' => $datos['stock'], // Al inicio, disponible es igual al total
         ':img'              => $datos['imagen']
     ]);
+    }
+    public function getPorId($id) {
+    $sql = "SELECT * FROM eventos WHERE id_evento = :id";
+    $stmt = $this->db->prepare($sql);
+    $stmt->execute([':id' => $id]);
+    return $stmt->fetch(\PDO::FETCH_ASSOC);
+}
+
+    public function eliminar($id) {
+    $sql = "DELETE FROM eventos WHERE id_evento = :id";
+    $stmt = $this->db->prepare($sql);
+    return $stmt->execute([':id' => $id]);
 }
 
 } // fin de la clase

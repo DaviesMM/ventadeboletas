@@ -17,6 +17,9 @@ $router->add('admin/asistentes_evento', 'App\Controllers\AdminController', 'verA
 // Rutas para creación de eventos
 $router->add('admin/nuevo_evento', 'App\Controllers\AdminController', 'crearEvento');
 $router->add('admin/guardar_evento', 'App\Controllers\AdminController', 'guardarEvento');
+// Detalle, edición y eliminación
+$router->add('admin/detalle', 'App\Controllers\AdminController', 'verDetalle');
+$router->add('admin/eliminar_evento', 'App\Controllers\AdminController', 'eliminarEvento');
 
 // --- RUTAS DEL STAFF ---
 $router->add('staff/scanner', 'App\Controllers\StaffController', 'index');
