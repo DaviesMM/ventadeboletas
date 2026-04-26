@@ -73,5 +73,9 @@ public function insertar($datos) {
     $stmt = $this->db->prepare($sql);
     return $stmt->execute([':id' => $id]);
 }
-
+// solo trae los eventos activos 
+ public function getEventosActivos() {
+    $sql = "SELECT * FROM eventos WHERE estado = 'activo' AND stock_disponible > 0 ORDER BY fecha_evento ASC";
+    return $this->db->query($sql)->fetchAll(\PDO::FETCH_ASSOC);
+}
 } // fin de la clase

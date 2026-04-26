@@ -7,9 +7,11 @@ $router = new Router();
 
 
 // --- RUTAS PÚBLICAS (TIENDA) ---
-$router->add('', 'App\Controllers\TiendaController', 'index');
-$router->add('evento', 'App\Controllers\TiendaController', 'MostrarEvento');
-
+$router->add('', 'App\Controllers\TiendaController', 'index'); // Home de la tienda
+$router->add('evento/detalle', 'App\Controllers\TiendaController', 'verEvento');
+$router->add('compra/procesar', 'App\Controllers\TiendaController', 'procesarCompra');
+$router->add('compra/confirmacion', 'App\Controllers\TiendaController', 'confirmacionPago');
+$router->add('compra/finalizar', 'App\Controllers\TiendaController', 'finalizarRegistro');
 // --- RUTAS ADMINISTRATIVAS ---
 $router->add('admin', 'App\Controllers\AdminController', 'index');
 $router->add('admin/reportes', 'App\Controllers\AdminController', 'reportes');
