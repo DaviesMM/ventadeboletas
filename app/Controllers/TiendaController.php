@@ -40,31 +40,32 @@ class TiendaController extends BaseController {
 public function confirmacionPago() {
     if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         
-        // Recogemos lo que viene del formulario de detalle.php
         $id_evento = $_POST['id_evento'];
-        $metodo = $_POST['metodo_pago'];
-        $cantidad = $_POST['cantidad'];
-        $precio_unitario = $_POST['precio_unitario'];
+        
+        // Si por alguna razón el hidden falla, lo pedimos al modelo
+        $precio_unitario = $_POST['precio_unitario'] ?? null;
+        
+        if (!$precio_unitario) {
+            $eventoModel = new \App\Models\Evento();
+            $evento = $eventoModel->getPorId($id_evento);
+            $precio_unitario = $evento['precio_boleta'];
+        }
 
-        // Calculamos el total aquí para mostrarlo en la siguiente vista
+        $cantidad = $_POST['cantidad'];
         $total = $cantidad * $precio_unitario;
 
         $data = [
-            'titulo' => 'Confirmar su Pago',
             'id_evento' => $id_evento,
             'nombre_cliente' => $_POST['nombre_cliente'],
             'email_cliente' => $_POST['email_cliente'],
             'telefono_cliente' => $_POST['telefono_cliente'],
             'cantidad' => $cantidad,
-            'metodo' => $metodo,
-            'total' => $total
+            'metodo' => $_POST['metodo_pago'],
+            'total' => $total,
+            'titulo' => 'Confirmar su Pago'
         ];
 
-        // Cargamos la vista de confirmación que creamos en el paso anterior
         $this->render('tienda/confirmacion', $data, 'publico');
-    } else {
-        // Si alguien intenta entrar por URL sin enviar datos, lo mandamos al inicio
-        header('Location: /E-ticket/');
     }
 }
     public function procesarCompra() {
@@ -120,8 +121,22 @@ public function confirmacionPago() {
         // Manejo de la imagen del comprobante si existe
         if (isset($_FILES['comprobante']) && $_FILES['comprobante']['error'] === 0) {
             $ruta = 'public/uploads/pagos/' . time() . "_" . $_FILES['comprobante']['name'];
-            move_uploaded_file($_FILES['comprobante']['tmp_name'], $ruta);
-            $datos['comprobante'] = $ruta;
+            $directorio = 'uploads/pagos/';
+
+            // Si la carpeta no existe, la creamos con permisos (0777)
+            if (!is_dir($directorio)) {
+                mkdir($directorio, 0777, true);
+            }
+
+            $ruta = $directorio . time() . "_" . $_FILES['comprobante']['name'];
+
+            if (move_uploaded_file($_FILES['comprobante']['tmp_name'], $ruta)) {
+                $datos['comprobante'] = $ruta;
+            } else {
+                move_uploaded_file($_FILES['comprobante']['tmp_name'], $ruta);
+                $datos['comprobante'] = $ruta;
+            }
+            
         }
 
         $idVenta = $ventaModel->crearVentaPendiente($datos);

@@ -31,7 +31,28 @@ class AdminController extends BaseController {
         $data = ['titulo' => 'Crear Nuevo Evento'];
         $this->render('admin/nuevo_evento', $data, 'admin');
     }
+     public function listarPagos() {
+    $ventaModel = new \App\Models\Venta();
+    
+    $data = [
+        'titulo' => 'Validación de Pagos',
+        'pagos' => $ventaModel->getPagosPorRevisar()
+    ];
 
+    $this->render('admin/pagos_revision', $data, 'admin');
+}
+
+public function aprobarPago() {
+    if ($_SERVER['REQUEST_METHOD'] === 'POST') {
+        $id_venta = $_POST['id_venta'];
+        $ventaModel = new \App\Models\Venta();
+
+        if ($ventaModel->confirmarPago($id_venta)) {
+            // Aquí es donde en el futuro dispararemos el Email/WhatsApp
+            header('Location: /E-ticket/admin/pagos_pendientes?success=1');
+        }
+    }
+}
     public function guardarEvento() {
         if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $eventoModel = new \App\Models\Evento();

@@ -12,6 +12,7 @@ $router->add('evento/detalle', 'App\Controllers\TiendaController', 'verEvento');
 $router->add('compra/procesar', 'App\Controllers\TiendaController', 'procesarCompra');
 $router->add('compra/confirmacion', 'App\Controllers\TiendaController', 'confirmacionPago');
 $router->add('compra/finalizar', 'App\Controllers\TiendaController', 'finalizarRegistro');
+
 // --- RUTAS ADMINISTRATIVAS ---
 $router->add('admin', 'App\Controllers\AdminController', 'index');
 $router->add('admin/reportes', 'App\Controllers\AdminController', 'reportes');
@@ -22,6 +23,9 @@ $router->add('admin/guardar_evento', 'App\Controllers\AdminController', 'guardar
 // Detalle, edición y eliminación
 $router->add('admin/detalle', 'App\Controllers\AdminController', 'verDetalle');
 $router->add('admin/eliminar_evento', 'App\Controllers\AdminController', 'eliminarEvento');
+// Rutas para gestión de pagos
+$router->add('admin/pagos_pendientes', 'App\Controllers\AdminController', 'listarPagos');
+$router->add('admin/aprobar_pago', 'App\Controllers\AdminController', 'aprobarPago');
 
 // --- RUTAS DEL STAFF ---
 $router->add('staff/scanner', 'App\Controllers\StaffController', 'index');
